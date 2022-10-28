@@ -3,6 +3,7 @@ const {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLInt,
   GraphQLList,
 } = require("graphql");
 const UserType = require("./User");
@@ -12,8 +13,16 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     getAllUsers: {
       type: new GraphQLList(UserType),
-      resolve(parent, args) {
-        return userData;
+      args: {
+        page: { type: GraphQLInt },
+        count: { type: GraphQLInt },
+      },
+      resolve(parent, { page, count }) {
+        console.log(page, count);
+        const start = count * (page - 1);
+        const end = start + count;
+        const users = userData.slice(start, end);
+        return users;
       },
     },
   },
